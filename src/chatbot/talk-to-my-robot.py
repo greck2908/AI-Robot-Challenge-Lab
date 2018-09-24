@@ -28,24 +28,24 @@ class ComputerVisionApiService:
     @staticmethod
     def analyze_image(image_url):
         #Analyze Image Request Headers and Parameters (do not uncomment this line)
-        # headers = {
-        #     'Ocp-Apim-Subscription-Key': COMPUTER_VISION_SUBSCRIPTION_KEY,
-        #     'Content-Type': 'application/octet-stream'
-        # }
-        # params = {'visualFeatures': 'Color'}
+        headers = {
+            'Ocp-Apim-Subscription-Key': COMPUTER_VISION_SUBSCRIPTION_KEY,
+            'Content-Type': 'application/octet-stream'
+        }
+        params = {'visualFeatures': 'Color'}
 
         #Get Image Bytes Content (do not uncomment this line)
-        #image_data = BytesIO(requests.get(image_url).content)
+        image_data = BytesIO(requests.get(image_url).content)
         
         try:
             #Process Image (do not uncomment this line)
-            # print('Processing image: {}'.format(image_url))
-            # response = requests.post(COMPUTER_VISION_ANALYZE_URL, headers=headers, params=params, data=image_data)
-            # response.raise_for_status()
-            # analysis = response.json()
-            # dominant_color = analysis["color"]["dominantColors"][0]
+            print('Processing image: {}'.format(image_url))
+            response = requests.post(COMPUTER_VISION_ANALYZE_URL, headers=headers, params=params, data=image_data)
+            response.raise_for_status()
+            analysis = response.json()
+            dominant_color = analysis["color"]["dominantColors"][0]
             
-            # return dominant_color
+            return dominant_color
 
             return None #REMOVE this line when you uncomment the line above
         except Exception as e:
@@ -121,7 +121,7 @@ class BotRequestHandler:
                 # Set Show Stats Handler (do not uncomment this line)
                 stats = BotCommandHandler.show_stats()
                 response = await BotRequestHandler.create_reply_activity(activity, stats)
-                await context.send_activity(response)
+                await context.send_activity(response),cdxxxc
 
                 print("ShowStats") 
             else:
@@ -143,16 +143,16 @@ class BotRequestHandler:
     
     async def process_image(activity: Activity, context: TurnContext):
         # Implement Process Image Method (do not uncomment this line)
-        # image_url = BotRequestHandler.get_image_url(activity.attachments)
+        image_url = BotRequestHandler.get_image_url(activity.attachments)
 
-        # if image_url:
-        #     dominant_color = ComputerVisionApiService.analyze_image(image_url)
-        #     response = await BotRequestHandler.create_reply_activity(activity, f'Do you need a {dominant_color} cube? Let me find one for you!')
-        #     await context.send_activity(response)
-        #     BotCommandHandler.move_cube(dominant_color)
-        # else:
-        #     response = await BotRequestHandler.create_reply_activity(activity, 'Please provide a valid instruction or image.')
-        #     await context.send_activity(response)
+        if image_url:
+            dominant_color = ComputerVisionApiService.analyze_image(image_url)
+            response = await BotRequestHandler.create_reply_activity(activity, f'Do you need a {dominant_color} cube? Let me find one for you!')
+            await context.send_activity(response)
+            BotCommandHandler.move_cube(dominant_color)
+        else:
+            response = await BotRequestHandler.create_reply_activity(activity, 'Please provide a valid instruction or image.')
+            await context.send_activity(response)
 
         return None 
 
@@ -198,45 +198,45 @@ class BotCommandHandler:
 
     def move_grippers(action):
         #Implement Move Grippers Command (do not uncomment this line)
-        # print(f'{action} grippers... wait a few seconds')
-        # # launch your python2 script using bash
-        # python2_command = "python2.7 bot-move-grippers.py -a {}".format(action)  
+        print(f'{action} grippers... wait a few seconds')
+        # launch your python2 script using bash
+        python2_command = "python2.7 bot-move-grippers.py -a {}".format(action)  
 
-        # process = subprocess.Popen(python2_command.split(), stdout=subprocess.PIPE)
-        # output, error = process.communicate()  # receive output from the python2 script
+        process = subprocess.Popen(python2_command.split(), stdout=subprocess.PIPE)
+        output, error = process.communicate()  # receive output from the python2 script
       
-        # print('done moving grippers . . .')
-        # print('returncode: '  + str(process.returncode))
-        # print('output: ' + output.decode("utf-8"))
+        print('done moving grippers . . .')
+        print('returncode: '  + str(process.returncode))
+        print('output: ' + output.decode("utf-8"))
         
         return None
 
     def show_stats():
         #Implement Show Stats Command (do not uncomment this line)
-        # print('Showing stats... do something')
-        # # launch your python2 script using bash
-        # python2_command = "python2.7 bot-stats-node.py"  
+        print('Showing stats... do something')
+        # launch your python2 script using bash
+        python2_command = "python2.7 bot-stats-node.py"  
 
-        # process = subprocess.Popen(python2_command.split(), stdout=subprocess.PIPE)
-        # output, error = process.communicate()  # receive output from the python2 script
-        # result = output.decode("utf-8")
+        process = subprocess.Popen(python2_command.split(), stdout=subprocess.PIPE)
+        output, error = process.communicate()  # receive output from the python2 script
+        result = output.decode("utf-8")
       
-        # print('done getting state . . .')
-        # print('returncode: '  + str(process.returncode))
-        # print('output: ' + result + '\n')
-        # return result
+        print('done getting state . . .')
+        print('returncode: '  + str(process.returncode))
+        print('output: ' + result + '\n')
+        return result
 
-        return None #REMOVE this line when you uncomment the line above
+        #return None #REMOVE this line when you uncomment the line above
 
     def move_cube(color):
         #Implement Move Cube Command (do not uncomment this line)
-        # print(f'Moving {color} cube...')
-        # try:
-        #     r = requests.get(f'{SIM_API_HOST}/put_block_into_tray/{color}/1')
-        #     r.raise_for_status()
-        #     print('done moving cube . . .')
-        # except Exception as e:
-        #     print("[Errno {0}] {1}".format(e.errno, e.strerror))
+        print(f'Moving {color} cube...')
+        try:
+            r = requests.get(f'{SIM_API_HOST}/put_block_into_tray/{color}/1')
+            r.raise_for_status()
+            print('done moving cube . . .')
+        except Exception as e:
+            print("[Errno {0}] {1}".format(e.errno, e.strerror))
         
         return None 
 
