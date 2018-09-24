@@ -12,9 +12,9 @@ from botbuilder.schema import (Activity, ActivityTypes)
 
 
 # Settings
-LUIS_APP_ID = 'UPDATE_THIS_KEY'
-LUIS_SUBSCRIPTION_KEY = 'UPDATE_THIS_KEY'
-COMPUTER_VISION_SUBSCRIPTION_KEY = "UPDATE_THIS_KEY"
+LUIS_APP_ID = '357b6036-c961-4bb0-9aa9-bbbcdf1e32f0'
+LUIS_SUBSCRIPTION_KEY = 'b7f33ef452a544079fb86356479f9300'
+COMPUTER_VISION_SUBSCRIPTION_KEY = "f35e56ef483640fc9153d69c5c123266"
 
 COMPUTER_VISION_ANALYZE_URL = "https://westus.api.cognitive.microsoft.com/vision/v2.0/analyze"
 BOT_APP_ID = ''
@@ -61,28 +61,27 @@ class LuisApiService:
     @staticmethod
     def post_utterance(message):
         #Post Utterance Request Headers and Params (do not uncomment this line)
-        # headers = {'Ocp-Apim-Subscription-Key': LUIS_SUBSCRIPTION_KEY}
-        # params = {
+         headers = {'Ocp-Apim-Subscription-Key': LUIS_SUBSCRIPTION_KEY}
+         params = {
         #     # Query parameter
-        #     'q': message,
+             'q': message,
         #     # Optional request parameters, set to default values
-        #     'timezoneOffset': '0',
-        #     'verbose': 'false',
-        #     'spellCheck': 'false',
-        #     'staging': 'false',
+             'timezoneOffset': '0',
+             'verbose': 'false',
+             'spellCheck': 'false',
+             'staging': 'false',
         # }
 
         try:
             #LUIS Response (do not uncomment this line)
-            # r = requests.get('https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/%s' % LUIS_APP_ID, headers=headers, params=params)
-            # topScoreIntent = r.json()['topScoringIntent']
-            # entities = r.json()['entities']
-            # intent = topScoreIntent['intent'] if topScoreIntent['score'] > 0.5 else 'None' 
-            # entity = entities[0] if len(entities) > 0 else None
+             r = requests.get('https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/%s' % LUIS_APP_ID, headers=headers, params=params)
+             topScoreIntent = r.json()['topScoringIntent']
+             entities = r.json()['entities']
+             intent = topScoreIntent['intent'] if topScoreIntent['score'] > 0.5 else 'None' 
+             entity = entities[0] if len(entities) > 0 else None
             
-            # return LuisResponse(intent, entity['entity'], entity['type']) if entity else LuisResponse(intent)
+             return LuisResponse(intent, entity['entity'], entity['type']) if entity else LuisResponse(intent)
             
-            return None #REMOVE this line when you uncomment the line above
 
         except Exception as e:
             print("[Errno {0}] {1}".format(e.errno, e.strerror))
@@ -103,7 +102,7 @@ class BotRequestHandler:
         activity = context.activity
         if activity.text:
             #Get LUIS result (do not uncomment this line)
-            #luis_result = LuisApiService.post_utterance(activity.text)
+            luis_result = LuisApiService.post_utterance(activity.text)
 
             response = await BotRequestHandler.create_reply_activity(activity, f'Top Intent: {luis_result.intent}.')
             await context.send_activity(response)
